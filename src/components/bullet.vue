@@ -1,14 +1,15 @@
 <template>
   <div
-      class="bullet-box"
-      :style="{
-        width: widthStr,
-        left: leftStr,
-        top: topStr
-      }"
-    >
-      <div v-for="bullet in bulletNum" :key='bullet' class="bullet"></div>
-    </div>
+    v-show="isShow"
+    class="bullet-box"
+    :style="{
+      width: widthStr,
+      left: leftStr,
+      top: topStr,
+    }"
+  >
+    <div v-for="bullet in bulletRow" :key="bullet" class="bullet"></div>
+  </div>
 </template>
 
 <script>
@@ -17,12 +18,15 @@ export default {
     return {
       topStr: "",
       leftStr: "",
-      bulletNum:4,
-      bulletList:[0]
+      topNum: 0,
+      isShow:false
     };
   },
   props: {
     width: {
+      type: Number,
+    },
+    bulletRow: {
       type: Number,
     },
     top: {
@@ -31,20 +35,32 @@ export default {
     left: {
       type: Number,
     },
+    time:{
+      type:Number
+    }
   },
   computed: {
     widthStr() {
       return this.width + "px";
-    }
+    },
   },
   mounted() {
+    this.topStr = this.top + "px";
     this.leftStr = this.left + "px";
     this.topNum = this.top;
-    setInterval(() => {
-      this.topNum -=1;
-      this.topStr = this.topNum + "px";
-    }, 6); 
-   
+    setTimeout(() => {
+      setInterval(() => {
+        this.isShow=true
+        if (this.topNum > -100) {
+          this.topNum -= 2;
+          this.topStr = this.topNum + "px";
+        } else {
+          this.topNum= this.top;
+          this.leftStr = this.left + "px";
+          this.topStr = this.top + "px";
+        }
+      }, 6);
+    }, this.time*60);
   },
 };
 </script>

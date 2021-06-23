@@ -5,21 +5,23 @@
     @mousemove="onMouseMove"
     @mouseup="onMouseUp"
   >
-    <div ref="game" class="game-box game">
+    <div ref="game" class="game-box game" :style="{backgroundPositionY:backgroundPositionY+'px'}">
       <Me
         ref="me"
         @touchmove="onTouchMove"
-        :left="pageX"
-        :top="pageY"
-        :width="meWidth"
-        :height="meHeight"
+        :left="me.pageX"
+        :top="me.pageY"
+        :width="me.meWidth"
+        :height="me.meHeight"
       />
       <my-bullet
-        v-for="bullet in bulletList"
+        v-for="bullet in myBullet.bulletList"
         :key="bullet"
-        :left="pageX"
-        :top="pageY"
-        :width="meWidth"
+        :time='bullet'
+        :left="me.pageX"
+        :top="me.pageY"
+        :width="me.meWidth"
+        :bulletRow='myBullet.bulletRow'
       />
     </div>
   </div>
@@ -32,11 +34,17 @@ export default {
   data() {
     return {
       isMouseDown: false,
-      pageX: 156,
-      pageY: 610,
-      meWidth: 102,
-      meHeight: 126,
-      bulletList: [0],
+      backgroundPositionY:0,
+      me:{
+        pageX: 156,
+        pageY: 610,
+        meWidth: 102,
+        meHeight: 126,
+      },
+      myBullet:{
+        bulletRow:2,
+        bulletList: 36,
+      }
     };
   },
   components: {
@@ -46,16 +54,16 @@ export default {
   methods: {
     onTouchMove(ev) {
       if (
-        ev.touches[0].pageX - this.meWidth / 2 > 0 &&
-        ev.touches[0].pageX + this.meWidth / 2 < ev.view.outerWidth
+        ev.touches[0].pageX - this.me.meWidth / 2 > 0 &&
+        ev.touches[0].pageX + this.me.meWidth / 2 < ev.view.outerWidth
       ) {
-        this.pageX = ev.touches[0].pageX - this.meWidth / 2;
+        this.me.pageX = ev.touches[0].pageX - this.me.meWidth / 2;
       }
       if (
-        ev.touches[0].pageY + this.meHeight / 2 < ev.view.outerHeight &&
-        ev.touches[0].pageY - this.meHeight / 2 > 0
+        ev.touches[0].pageY + this.me.meHeight / 2 < ev.view.outerHeight &&
+        ev.touches[0].pageY - this.me.meHeight / 2 > 0
       ) {
-        this.pageY = ev.touches[0].pageY - this.meHeight / 2;
+        this.me.pageY = ev.touches[0].pageY - this.me.meHeight / 2;
       }
     },
     onMouseDown(ev) {
@@ -68,30 +76,31 @@ export default {
     },
     onMouseMove(ev) {
       if (this.isMouseDown) {
-        let left = ev.pageX - this.$refs.game.offsetLeft - this.meWidth / 2;
-        let width = this.meWidth;
-        let height = this.meHeight / 2;
-        let top = ev.pageY - this.meHeight / 2;
+        let left = ev.pageX - this.$refs.game.offsetLeft - this.me.meWidth / 2;
+        let width = this.me.meWidth;
+        let height = this.me.meHeight / 2;
+        let top = ev.pageY - this.me.meHeight / 2;
         let right = this.$refs.game.clientWidth;
         let bottom = this.$refs.game.clientHeight;
         if (left > 0 && left + width < right) {
-          this.pageX = left;
+          this.me.pageX = left;
         }
         if (top > 0 && top + 2 * height < bottom) {
-          this.pageY = top;
+          this.me.pageY = top;
         }
       }
     },
   },
   mounted() {
-    let num;
+    /* let num; */
     setInterval(() => {
-      num = Symbol("id");
-      if (this.bulletList.length > 35) {
-        this.bulletList.shift();
+      this.backgroundPositionY++
+      /* num = Symbol("id");
+      if (this.myBullet.bulletList.length > 55) {
+        this.myBullet.bulletList.shift();
       }
-      this.bulletList.push(num);
-    }, 120);
+      this.myBullet.bulletList.push(num); */
+    }, 60);
   },
 };
 </script>
